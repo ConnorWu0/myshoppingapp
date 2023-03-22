@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>SYSTEMS Home Page</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+
+<body>
+
+<div class="banner-bootom-w3-agileits py-5">
+	<div class="container py-xl-4 py-lg-2">
+		<h1 class="tittle-w3l text-center mb-lg-5 mb-sm-4 mb-3">
+			<span>W</span>elcome
+			<span>t</span>o
+			<span>S</span>YSTEMS
+			<span>H</span>ome
+			<span>P</span>age</h1><br>
+
+	</div> 
+</div>
+
+
+
+<p>
+	Your account information is as below.
+</p>
+
+
+
+<!-- display user name and role -->
+
+<div>
+
+
+	<!--		Role(s): <span sec:authentication="principal.authorities"></span>-->
+
+
+	<!-- Check for login error -->
+	<div th:if="${session.user}" class="shadow p-3 mb-5 bg-body-tertiary rounded">
+		<p>User: <span sec:authentication="name"></span></p>
+		<p th:text="'First name: ' + ${session.user.firstName}"></p>
+		<p th:text="'Last name: ' + ${session.user.lastName}"></p>
+		<p th:text="'Email: ' + ${session.user.email}"></p>
+
+	</div>
+</div>
+
+
+
+<!-- Add a logout button -->
+<form th:action="@{/logout}"
+	  method="POST">
+	<button class="btn btn-info">Logout</button>
+</form>
+<a th:href="@{/}">Back to Home Page</a>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
