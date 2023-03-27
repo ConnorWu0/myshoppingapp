@@ -36,10 +36,6 @@ public class ImageGalleryController {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-//    @GetMapping(value = {"/", "/home"})
-//    public String addProductPage() {
-//        return "index";
-//    }
 
     @PostMapping("/image/saveImageDetails")
     public @ResponseBody ResponseEntity<?> createProduct(@RequestParam("name") String name, @RequestParam("price") double price,

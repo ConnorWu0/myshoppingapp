@@ -43,4 +43,12 @@ public class UserDaoImpl implements UserDao {
 		currentSession.saveOrUpdate(theUser);
 	}
 
+	@Override
+	public void deleteById(Long theId) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		Query theQuery = currentSession.createQuery("delete from User where id=:userId");
+		theQuery.setParameter("userId", theId);
+		theQuery.executeUpdate();
+	}
+
 }

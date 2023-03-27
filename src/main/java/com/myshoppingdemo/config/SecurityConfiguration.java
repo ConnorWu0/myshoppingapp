@@ -30,8 +30,7 @@ public class SecurityConfiguration {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-				.authorizeHttpRequests((authz) -> {
+		http.authorizeHttpRequests((authz) -> {
 							try {
 								authz
 										.antMatchers("/account/**").hasRole("CUSTOMER")

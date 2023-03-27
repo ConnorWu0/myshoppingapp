@@ -5,6 +5,7 @@ import com.myshoppingdemo.dao.UserDao;
 import com.myshoppingdemo.entity.Role;
 import com.myshoppingdemo.entity.User;
 import com.myshoppingdemo.user.CrmUser;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,12 +16,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+	private EntityManager entityManager;
 
 	// need to inject user dao
 	@Autowired
@@ -57,6 +63,15 @@ public class UserServiceImpl implements UserService {
 		 // save user in the database
 		userDao.save(user);
 	}
+
+	@Override
+	@Transactional
+	public void deleteById(Long theId) {
+
+		userDao.deleteById(theId);
+	}
+
+
 
 	@Override
 	@Transactional
