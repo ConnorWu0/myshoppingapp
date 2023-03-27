@@ -1,24 +1,17 @@
 package com.myshoppingdemo.controller;
 
-import java.util.logging.Logger;
-
-import javax.validation.Valid;
-
+import com.myshoppingdemo.service.UserService;
+import com.myshoppingdemo.user.CrmUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import com.myshoppingdemo.user.CrmUser;
-import com.myshoppingdemo.entity.User;
-import com.myshoppingdemo.service.UserService;
+import javax.validation.Valid;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/register")
@@ -60,14 +53,15 @@ public class RegistrationController {
 	        }
 
 		// check the database if user already exists
-        User existing = userService.findByUserName(userName);
-        if (existing != null){
-        	theModel.addAttribute("crmUser", new CrmUser());
+
+		if (userService.findByUserName(userName).isPresent()) {
+			userService.findByUserName(userName).get();
+			theModel.addAttribute("crmUser", new CrmUser());
 			theModel.addAttribute("registrationError", "User name already exists.");
 
 			logger.warning("User name already exists.");
-        	return "registration-form";
-        }
+			return "registration-form";
+		}
         
         // create user account        						
         userService.save(theCrmUser);

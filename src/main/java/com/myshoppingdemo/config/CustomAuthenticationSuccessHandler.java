@@ -1,6 +1,8 @@
 package com.myshoppingdemo.config;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +34,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		String userName = authentication.getName();
 		
 		System.out.println("userName=" + userName);
-
-		User theUser = userService.findByUserName(userName);
 		
+		Optional<User> optionalUser = userService.findByUserName(userName);
+		User theUser;
+		if (!optionalUser.isPresent()) {
+			throw new NoSuchElementException("The user is not found");
+		} else {
+			theUser = optionalUser.get();
+		}
 		// now place in the session
 		HttpSession session = request.getSession();
 		session.setAttribute("user", theUser);

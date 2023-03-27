@@ -1,11 +1,13 @@
 package com.myshoppingdemo.service;
 
-import com.myshoppingdemo.dao.RoleDao;
-import com.myshoppingdemo.dao.UserDao;
+
 import com.myshoppingdemo.entity.Role;
 import com.myshoppingdemo.entity.User;
+import com.myshoppingdemo.repository.RoleRepository;
+import com.myshoppingdemo.repository.UserRepository;
 import com.myshoppingdemo.user.CrmUser;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,23 +19,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-
+	@Autowired
 	private EntityManager entityManager;
 
-	// need to inject user dao
-	@Autowired
-	private UserDao userDao;
 
 	@Autowired
-	private RoleDao roleDao;
+	private UserRepository userRepository;
+
+	@Autowired
+	private RoleRepository roleRepository;
 
 	@Lazy
 	@Autowired
@@ -41,9 +40,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public User findByUserName(String userName) {
+	public Optional<User> findByUserName(String userName) {
 		// check the database if the user already exists
-		return userDao.findByUserName(userName);
+		return userRepository.findByUserName(userName);
 	}
 
 	@Override
@@ -57,18 +56,24 @@ public class UserServiceImpl implements UserService {
 		user.setLastName(crmUser.getLastName());
 		user.setEmail(crmUser.getEmail());
 
-		// give user default role of "employee"
-		user.setRoles(Arrays.asList(roleDao.findRoleByName("ROLE_CUSTOMER")));
-
+		// give user default role of "CUSTOMER"
+		Optional<Role> roleCustomer = roleRepository.findRoleByName("ROLE_CUSTOMER");
+		if (!roleCustomer.isPresent()) {
+			throw new NoSuchElementException("The role is not found");
+		} else {
+			user.setRoles(Collections.singletonList(roleCustomer.get()));
+		}
 		 // save user in the database
-		userDao.save(user);
+		userRepository.save(user);
 	}
 
 	@Override
 	@Transactional
 	public void deleteById(Long theId) {
-
-		userDao.deleteById(theId);
+		Session currentSession = entityManager.unwrap(Session.class);
+		Query theQuery = currentSession.createQuery("delete from User where id=:userId");
+		theQuery.setParameter("userId", theId);
+		theQuery.executeUpdate();
 	}
 
 
@@ -76,12 +81,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		User user = userDao.findByUserName(userName);
-		if (user == null) {
+		Optional<User> user = userRepository.findByUserName(userName);
+		if (!user.isPresent()) {
 			throw new UsernameNotFoundException("Invalid username or password.");
 		}
-		return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
-				mapRolesToAuthorities(user.getRoles()));
+		return new org.springframework.security.core.userdetails.User(user.get().getUserName(), user.get().getPassword(),
+				mapRolesToAuthorities(user.get().getRoles()));
 	}
 
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
