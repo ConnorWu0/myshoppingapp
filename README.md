@@ -3,7 +3,7 @@
 先在MySQL Workbench實施sql-scripts裡的01-create-user.sql和02-create-tables.sql。如果不想創造新的MySQL使用者，可以不要實施01-create-user.sql，但是要把myshoppingapp/src/main/resources/application.properties
 裡面的spring.datasource.username=user的user改成你的MySQL使用者名稱，還有把spring.datasource.password=user的user改成你的密碼。
 
-實施02-create-tables.sql後，現在在MySQL的資料庫中，建立了一個名為my_shopping_demo的資料庫，有三個使用者，john、mary和susan。john的role是ROLE_CUSTOMER，
+實施02-create-tables.sql後，現在在MySQL的資料庫中，建立了一個名為my_shopping_demo的資料庫，有三個使用者:john、mary和susan。john的role是ROLE_CUSTOMER，
 而mary和susan的role是ROLE_ADMIN。所有使用者的密碼都是fun123。
 
 執行程式後，打開瀏覽器，在網誌列輸入http://localhost:8080/ ，會看到Homepage，此時還沒加入任何項目。
