@@ -34,7 +34,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		String userName = authentication.getName();
 		
 		System.out.println("userName=" + userName);
-		
+
 		Optional<User> optionalUser = userService.findByUserName(userName);
 		User theUser;
 		if (!optionalUser.isPresent()) {
